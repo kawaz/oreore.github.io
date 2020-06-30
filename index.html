@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>oreore.net | Free certificate for localhost</title>
+<meta name="generator" content="Jekyll v3.8.7" />
+<meta property="og:title" content="oreore.net" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Free certificate for localhost" />
+<meta property="og:description" content="Free certificate for localhost" />
+<link rel="canonical" href="https://oreore.net/" />
+<meta property="og:url" content="http://oreore.net/" />
+<meta property="og:site_name" content="oreore.net" />
+<script type="application/ld+json">
+{"@type":"WebSite","url":"http://oreore.net/","headline":"oreore.net","name":"oreore.net","description":"Free certificate for localhost","@context":"https://schema.org"}</script>
+
+<link rel="stylesheet" href="/assets/css/style.css?v=7d113867c7470e50aad4835ee5ab60c7d370d91e">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TX7Q6NH');</script>
+<!-- End Google Tag Manager -->
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX7Q6NH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="container-lg px-3 my-5 markdown-body">
+<h1 id="oreorenet">oreore.net</h1>
+<p>Free localhost certificate</p>
+<h1 id="localhost-for-development">localhost for development</h1>
+<p>The following FQDNs return <code class="language-plaintext highlighter-rouge">127.0.0.1</code> or <code class="language-plaintext highlighter-rouge">::1</code></p>
+<ul>
+<li>*.oreore.net</li>
+<li>*.lo.oreore.net</li>
+<li>*.localhost.oreore.net</li>
+</ul>
+<h1 id="free-key-and-cert-for-oreorenet">Free key and cert for *.oreore.net</h1>
+<ul>
+<li><a href="https://oreore.net/key.pem">key.pem</a></li>
+<li><a href="https://oreore.net/cert.pem">cert.pem</a></li>
+</ul>
+<h1 id="usage">Usage</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Download key and cert
+curl -sO https://oreore.net/key.pem
+curl -sO https://oreore.net/cert.pem
+
+# Launch web server
+openssl s_server -key key.pem -cert cert.pem -www
+</code></pre></div></div>
+<p>Open <a href="https://localhost.oreore.net:4433">https://localhost.oreore.net:4433</a></p>
+<h1 id="screenshot">Screenshot</h1>
+<p><img src="/cert-screenshot.png" alt="screenshot" /></p>
+<div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+This site is open source. <a href="https://github.com/kawaz/oreore.net/edit/master/README.md">Improve this page</a>.
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+<script>anchors.add();</script>
+</body>
+</html>
