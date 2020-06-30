@@ -1,5 +1,5 @@
 # oreore.net
-[https://oreore.net](https://oreore.net)
+Free localhost certificate
 
 # localhost for development
 The following FQDNs return `127.0.0.1` or `::1`
@@ -7,7 +7,7 @@ The following FQDNs return `127.0.0.1` or `::1`
 - *.lo.oreore.net
 - *.localhost.oreore.net
 
-# key and cert for *.oreore.net
+# Free key and cert for *.oreore.net
 - [key.pem](https://oreore.net/key.pem)
 - [cert.pem](https://oreore.net/cert.pem)
 
