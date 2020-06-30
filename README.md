@@ -24,3 +24,5 @@ openssl s_server -key key.pem -cert cert.pem -www
 
 Open [https://localhost.oreore.net:4433](https://localhost.oreore.net:4433)
 
+# Screenshot
+![screenshot](cert-screenshot.png)
