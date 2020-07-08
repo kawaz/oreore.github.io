@@ -15,8 +15,8 @@ The following FQDNs return `127.0.0.1` or `::1`
 
 ```
 # Download key and cert
-curl -sO https://oreore.net/key.pem
-curl -sO https://oreore.net/cert.pem
+curl -sLO https://oreore.net/key.pem
+curl -sLO https://oreore.net/cert.pem
 
 # Launch web server
 openssl s_server -key key.pem -cert cert.pem -www
