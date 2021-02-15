@@ -43,16 +43,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </ul>
 <h1 id="free-key-and-cert-for-oreorenet">Free key and cert for *.oreore.net</h1>
 <ul>
-<li><a href="https://oreore.net/key.pem">key.pem</a></li>
-<li><a href="https://oreore.net/cert.pem">cert.pem</a></li>
+<li><a href="https://oreore.net/cert.key">cert.key</a></li>
+<li><a href="https://oreore.net/cert.crt">cert.crt</a></li>
 </ul>
 <h1 id="usage">Usage</h1>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Download key and cert
-curl -sO https://oreore.net/key.pem
-curl -sO https://oreore.net/cert.pem
+curl -sO https://oreore.net/cert.key
+curl -sO https://oreore.net/cert.crt
 
 # Launch web server
-openssl s_server -key key.pem -cert cert.pem -www
+openssl s_server -key cert.key -cert cert.crt -www
 </code></pre></div></div>
 <p>Open <a href="https://localhost.oreore.net:4433">https://localhost.oreore.net:4433</a></p>
 <h1 id="screenshot">Screenshot</h1>
