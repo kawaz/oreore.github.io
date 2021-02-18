@@ -1,8 +1,8 @@
 DOMAINS:=*.oreore.net *.lo.oreore.net *.localhost.oreore.net
 LEGO_SERVER_STG=https://acme-staging-v02.api.letsencrypt.org/directory
 LEGO_SERVER_PRD=https://acme-v02.api.letsencrypt.org/directory
-#LEGO_SERVER:=$(shell lego --help| grep -- --server | perl -pe 's/.*default: "//;s/".*//')
-LEGO_SERVER:=$(LEGO_SERVER_STG)
+LEGO_SERVER:=$(shell lego --help| grep -- --server | perl -pe 's/.*default: "//;s/".*//')
+#LEGO_SERVER:=$(LEGO_SERVER_STG)
 
 DOMAIN_PATH=$(subst *,_,$(firstword $(DOMAINS)))
 LEGO_SERVER_HOST=$(subst /directory,,$(subst https://,,$(LEGO_SERVER)))
