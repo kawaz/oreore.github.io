@@ -1,26 +1,61 @@
 DOMAINS:=*.oreore.net *.lo.oreore.net *.localhost.oreore.net
 LEGO_SERVER_STG=https://acme-staging-v02.api.letsencrypt.org/directory
 LEGO_SERVER_PRD=https://acme-v02.api.letsencrypt.org/directory
-LEGO_SERVER:=$(shell lego --help| grep -- --server | perl -pe 's/.*default: "//;s/".*//')
+#LEGO_SERVER:=$(shell lego --help| grep -- --server | perl -pe 's/.*default: "//;s/".*//')
 LEGO_SERVER:=$(LEGO_SERVER_STG)
 
 DOMAIN_PATH=$(subst *,_,$(firstword $(DOMAINS)))
-LEGO_SERVER_HOST:=$(patsubst /%,,$(patsubst %://,,$(LEGO_SERVER)))
+LEGO_SERVER_HOST=$(subst /directory,,$(subst https://,,$(LEGO_SERVER)))
 
-.PHONY: all
-all:
-	make .lego/certificates/$(DOMAIN_PATH).all.pem
-	make .lego/certificates/$(DOMAIN_PATH).all.pem.json
-	make filename_aliases
-	@# 以下はサイト上からファイルを取得しやすくする為のショートハンド
-	ln -sfn .lego/certificates/$(DOMAIN_PATH).key          key.pem
-	ln -sfn .lego/certificates/$(DOMAIN_PATH).crt          crt.pem
+all: all.pem all.pem.json
+
+clean: FORCE
+	rm -rf *.pem *.crt *.key *.pem.json certificates/
+
+FORCE:
+.PHONY: all clean FORCE
+
+symlink: key.pem crt.pem all.pem all.pem.json
+	@# サイト上からファイルを取得しやすくする為のショートハンド
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).all.pem      all.pem
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).all.pem.json all.pem.json
 
-.PHONY: clean
-clean:
-	rm -rf *.pem *.crt *.key *.pem.json certificates/
+.PRECIOUS: all.pem all.pem.json key.pem crt.pem
+all.pem: key.pem crt.pem
+	cat crt.pem key.pem > $@
+all.pem.json: key.pem crt.pem
+	jq -n --rawfile cert crt.pem --rawfile key key.pem '{$$cert,$$key}' > $@
+key.pem: .lego/certificates/$(DOMAIN_PATH).key
+	ln -sfn .lego/certificates/$(DOMAIN_PATH).key key.pem
+crt.pem: .lego/certificates/$(DOMAIN_PATH).crt
+	ln -sfn .lego/certificates/$(DOMAIN_PATH).crt crt.pem
+
+.PRECIOUS: .lego/certificates/%.key .lego/certificates/%.crt
+.lego/certificates/%.key .lego/certificates/%.crt: lego_run_check
+	@:
+
+lego_run_check: FORCE
+	@# 5184000 = 60 days
+	@# 6912000 = 80 days
+	@# 7776000 = 90 days
+	@openssl x509 -checkend 6912000 -noout < .lego/certificates/$(DOMAIN_PATH).crt || make lego_run
+
+lego_run: FORCE
+	make .lego/accounts/$(LEGO_SERVER_HOST)/$(LEGO_ACCOUNT)/account.json
+	docker run \
+		-e CLOUDFLARE_DNS_API_TOKEN="$(CLOUDFLARE_DNS_API_TOKEN)" \
+		-v "$(PWD)/.lego:/.lego" \
+		goacme/lego \
+		--dns cloudflare \
+		--server $(LEGO_SERVER) \
+		$(patsubst %,--domains %, $(DOMAINS)) \
+		--email "$(LEGO_ACCOUNT)" \
+		--accept-tos \
+		run
+
+.PRECIOUS: .lego/accounts/%/account.json
+.lego/accounts/%/account.json:
+	echo "$(LEGO_ACCOUNTS_TGZ)" | openssl enc -A -d -base64 | tar xz
 
 .PHONY: filename_aliases
 filename_aliases:
@@ -70,45 +105,4 @@ filename_aliases:
 	# ファイル種類(全部入り)+フォーマット  …シンプルな上に１ファイルで完結して便利。証明書と秘密鍵PEMを{cert,key}という構造のJSONにしたもの。Nodeのhttps.createServerに直接渡せて便利。証明書と秘密鍵を個別に必要ならjqなどで簡単に扱いやすい。但しファイル名だけをみてJSON構造に確信が持てるわけじゃない点がイマイチ。便利だがほかファイルとセット提供があると嬉しいが単体体評価なら星3。他とセットで提供されてると嬉しい存在。
 	ln -sfn $(DOMAIN_PATH).all.pem.json certificates/all.pem.json
 	# all.json とか server.json とかは流石に色々略しすぎてて証明書ファイル名としては適切じゃないと思うので作らない
-
-.PRECIOUS: .lego/certificates/%.all.pem
-.lego/certificates/%.all.pem: .lego/certificates/%.key .lego/certificates/%.crt
-	cat "$(@D)/$*.crt" "$(@D)/$*.key" > "$(@D)/$*.all.pem"
-
-.PRECIOUS: .lego/certificates/%.all.pem.json
-.lego/certificates/%.all.pem.json: .lego/certificates/%.key .lego/certificates/%.crt
-	jq -n --rawfile cert ".lego/certificates/$*.crt" --rawfile key ".lego/certificates/$*.key" '{$$cert,$$key}' > "$@"
-
-.PRECIOUS: .lego/certificates/%.key
-.lego/certificates/%.key: .lego/certificates/%.crt
-
-.PRECIOUS: .lego/certificates/%.crt
-.lego/certificates/%.crt: lego_run_$@
-
-.PHONY: lego_run_%
-lego_run_%:
-	#ifeq $(shell openssl x509 -checkend 5184000 -noout < $@ || echo old) old
-	ifeq $(shell openssl x509 -checkend 5184 -noout < $* || echo old) old
-		make lego_run
-	endif
-
-.PHONY: lego_run
-lego_run:
-	make .lego/accounts/$(LEGO_SERVER_HOST)/$(LEGO_ACCOUNT)/account.json
-	docker run \
-		-e CLOUDFLARE_DNS_API_TOKEN="$(CLOUDFLARE_DNS_API_TOKEN)" \
-		-v "$(PWD)/.lego:/.lego" \
-		goacme/lego \
-		--dns cloudflare \
-		--server $(LEGO_SERVER_HOST) \
-		$(patsubst %,--domains %, $(DOMAINS)) \
-		--email "$(LEGO_ACCOUNT)" \
-		--accept-tos \
-		run
-
-.PRECIOUS: .lego/accounts/%/account.json
-.lego/accounts/%/account.json:
-	ifdef $(LEGO_ACCOUNTS_TGZ)
-		echo "$(LEGO_ACCOUNTS_TGZ)" | openssl enc -A -d -base64 | tar xz; fi
-	endif
 
