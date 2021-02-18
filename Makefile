@@ -7,20 +7,20 @@ LEGO_SERVER:=$(LEGO_SERVER_STG)
 DOMAIN_PATH=$(subst *,_,$(firstword $(DOMAINS)))
 LEGO_SERVER_HOST:=$(patsubst /%,,$(patsubst %://,,$(LEGO_SERVER)))
 
-.PHONY: clean
-clean:
-	rm -rf *.pem *.crt *.key *.pem.json certificates/
-
 .PHONY: all
 all:
 	make .lego/certificates/$(DOMAIN_PATH).all.pem
 	make .lego/certificates/$(DOMAIN_PATH).all.pem.json
-	make extra_aliases
+	make filename_aliases
 	@# 以下はサイト上からファイルを取得しやすくする為のショートハンド
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).key          key.pem
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).crt          crt.pem
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).all.pem      all.pem
 	ln -sfn .lego/certificates/$(DOMAIN_PATH).all.pem.json all.pem.json
+
+.PHONY: clean
+clean:
+	rm -rf *.pem *.crt *.key *.pem.json certificates/
 
 .PHONY: filename_aliases
 filename_aliases:
@@ -77,13 +77,20 @@ filename_aliases:
 
 .PRECIOUS: .lego/certificates/%.all.pem.json
 .lego/certificates/%.all.pem.json: .lego/certificates/%.key .lego/certificates/%.crt
-	jq -n --rawfile cert "$(@D)/$*.crt" --rawfile key "$(@D)/$*.key" '{$cert,$key}' > "$(@D)/$*.all.pem"
+	jq -n --rawfile cert ".lego/certificates/$*.crt" --rawfile key ".lego/certificates/$*.key" '{$$cert,$$key}' > "$@"
 
-.PRECIOUS: .lego/certificates/%.key .lego/certificates/%.crt
-.lego/certificates/%.crt: lego_run
-	@:
-.lego/certificates/%.key: lego_run
-	@:
+.PRECIOUS: .lego/certificates/%.key
+.lego/certificates/%.key: .lego/certificates/%.crt
+
+.PRECIOUS: .lego/certificates/%.crt
+.lego/certificates/%.crt: lego_run_$@
+
+.PHONY: lego_run_%
+lego_run_%:
+	#ifeq $(shell openssl x509 -checkend 5184000 -noout < $@ || echo old) old
+	ifeq $(shell openssl x509 -checkend 5184 -noout < $* || echo old) old
+		make lego_run
+	endif
 
 .PHONY: lego_run
 lego_run:
@@ -101,5 +108,7 @@ lego_run:
 
 .PRECIOUS: .lego/accounts/%/account.json
 .lego/accounts/%/account.json:
-	if test -n "$(LEGO_ACCOUNTS_TGZ)"; then echo "$(LEGO_ACCOUNTS_TGZ)" | openssl enc -A -d -base64 | tar xz; fi
-	:
+	ifdef $(LEGO_ACCOUNTS_TGZ)
+		echo "$(LEGO_ACCOUNTS_TGZ)" | openssl enc -A -d -base64 | tar xz; fi
+	endif
+
