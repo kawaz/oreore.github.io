@@ -43,20 +43,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </ul>
 <h1 id="free-key-and-cert-for-oreorenet">Free key and cert for *.oreore.net</h1>
 <ul>
-<li><a href="https://oreore.net/cert.key">cert.key</a></li>
-<li><a href="https://oreore.net/cert.crt">cert.crt</a></li>
+<li><a href="https://oreore.net/key.pem">key.pem</a></li>
+<li><a href="https://oreore.net/crt.pem">crt.pem</a></li>
+<li>key and certificate
+<ul>
+<li><a href="https://oreore.net/all.pem">all.pem</a></li>
+<li><a href="https://oreore.net/all.pem.json">all.pem.json</a></li>
+</ul>
 </ul>
 <h1 id="usage">Usage</h1>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Download key and cert
-curl -sO https://oreore.net/cert.key
-curl -sO https://oreore.net/cert.crt
-
+curl -sO https://oreore.net/key.pem
+curl -sO https://oreore.net/crt.pem
 # Launch web server
-openssl s_server -key cert.key -cert cert.crt -www
+openssl s_server -key key.pem -cert crt.pem -www -accept 4433
 </code></pre></div></div>
 <p>Open <a href="https://localhost.oreore.net:4433">https://localhost.oreore.net:4433</a></p>
 <h1 id="screenshot">Screenshot</h1>
-<p><img src="cert-screenshot.png" alt="screenshot" /></p>
+<p><img src="https://oreore.net/screenshot-dialog-chrome.png" alt="screenshot" /></p>
 <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
 This site is open source. <a href="https://github.com/kawaz/oreore.net">Improve this page</a>.
 </div>

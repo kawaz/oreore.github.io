@@ -3,7 +3,7 @@ import https from 'https'
 
 Promise.all([
   new Promise((ok,ng,_='')=>https.request('https://oreore.net/key.pem',res=>res.on('data',d=>_+=d).on('end',()=>ok(_))).on('error',ng).end()),
-  new Promise((ok,ng,_='')=>https.request('https://oreore.net/cert.pem',res=>res.on('data',d=>_+=d).on('end',()=>ok(_))).on('error',ng).end()),
+  new Promise((ok,ng,_='')=>https.request('https://oreore.net/crt.pem',res=>res.on('data',d=>_+=d).on('end',()=>ok(_))).on('error',ng).end()),
 ])
   .then(([key,cert])=>new Promise((ok,ng)=>{
     const port = process.argv[2] ?? 8443;

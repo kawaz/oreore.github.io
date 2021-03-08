@@ -3,7 +3,7 @@ import http2 from 'http2'
 
 Promise.all([
   new Promise((ok,ng,_='')=>http2.connect('https://oreore.net').request({':path':'/key.pem'}).on('data',d=>_+=d).on('end',()=>ok(_)).on('error',ng).end()),
-  new Promise((ok,ng,_='')=>http2.connect('https://oreore.net').request({':path':'/cert.pem'}).on('data',d=>_+=d).on('end',()=>ok(_)).on('error',ng).end()),
+  new Promise((ok,ng,_='')=>http2.connect('https://oreore.net').request({':path':'/crt.pem'}).on('data',d=>_+=d).on('end',()=>ok(_)).on('error',ng).end()),
 ])
   .then(([key,cert])=>new Promise((ok,ng)=>{
     const port = process.argv[2] ?? 8443;
