@@ -7,7 +7,7 @@ LEGO_SERVER:=$(shell lego --help| grep -- --server | perl -pe 's/.*default: "//;
 DOMAIN_PATH=$(subst *,_,$(firstword $(DOMAINS)))
 LEGO_SERVER_HOST=$(subst /directory,,$(subst https://,,$(LEGO_SERVER)))
 
-all: all.pem all.pem.json
+all: all.pem all.pem.json lego_run_check
 
 clean: FORCE
 	rm -rf *.pem *.crt *.key *.pem.json certificates/
@@ -38,7 +38,7 @@ lego_run_check: FORCE
 	@# 5184000 = 60 days
 	@# 6912000 = 80 days
 	@# 7776000 = 90 days
-	@openssl x509 -checkend 6912000 -noout < .lego/certificates/$(DOMAIN_PATH).crt || make lego_run
+	openssl x509 -checkend 6912000 -noout < .lego/certificates/$(DOMAIN_PATH).crt || make lego_run
 
 lego_run: FORCE
 	make .lego/accounts/$(LEGO_SERVER_HOST)/$(LEGO_ACCOUNT)/account.json
