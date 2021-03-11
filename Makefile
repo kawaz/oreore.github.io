@@ -107,5 +107,5 @@ filename_aliases:
 	# all.json とか server.json とかは流石に色々略しすぎてて証明書ファイル名としては適切じゃないと思うので作らない
 
 .PHONY: publish_certificate
-publish_certificate:
+publish_certificate: lego_run_check
 	git commit -m "Update certificate" all.pem all.pem.json .lego/certificates/_.oreore.net.* && SSH_AUTH_SOCK=$(shell ls /tmp/com.apple.launchd.*/Listeners | head -n1) git push
