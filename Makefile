@@ -43,6 +43,7 @@ lego_run_check: FORCE
 lego_run: FORCE
 	make .lego/accounts/$(LEGO_SERVER_HOST)/$(LEGO_ACCOUNT)/account.json
 	docker run \
+		--rm \
 		-e CLOUDFLARE_DNS_API_TOKEN="$(CLOUDFLARE_DNS_API_TOKEN)" \
 		-v "$(PWD)/.lego:/.lego" \
 		goacme/lego \
