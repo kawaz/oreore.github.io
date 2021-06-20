@@ -1,3 +1,4 @@
+#DOMAINS:=*.oreore.net *.lo.oreore.net *.localhost.oreore.net *.ipv4.oreore.net *.ipv6.oreore.net
 DOMAINS:=*.oreore.net *.lo.oreore.net *.localhost.oreore.net
 LEGO_SERVER_STG=https://acme-staging-v02.api.letsencrypt.org/directory
 LEGO_SERVER_PRD=https://acme-v02.api.letsencrypt.org/directory
@@ -42,12 +43,9 @@ lego_run_check: FORCE
 
 lego_run: FORCE
 	make .lego/accounts/$(LEGO_SERVER_HOST)/$(LEGO_ACCOUNT)/account.json
-	docker run \
-		--rm \
-		-e CLOUDFLARE_DNS_API_TOKEN="$(CLOUDFLARE_DNS_API_TOKEN)" \
-		-v "$(PWD)/.lego:/.lego" \
-		goacme/lego \
-		--dns cloudflare \
+	lego \
+		--path "$(shell pwd)/.lego" \
+		--dns route53 \
 		--server $(LEGO_SERVER) \
 		$(patsubst %,--domains %, $(DOMAINS)) \
 		--email "$(LEGO_ACCOUNT)" \
