@@ -108,4 +108,5 @@ filename_aliases:
 .PHONY: publish_certificate
 publish_certificate: lego_run_check
 	make all.pem all.pem.json
-	git commit -m "Update certificate" all.pem all.pem.json .lego/certificates/_.oreore.net.* && SSH_AUTH_SOCK=$(shell ls /tmp/com.apple.launchd.*/Listeners | head -n1) git push
+	git commit -m "Update certificate" all.pem all.pem.json .lego/certificates/
+	SSH_AUTH_SOCK=$(shell ls -t /tmp/com.apple.launchd.*/Listeners | head -n1) git push
